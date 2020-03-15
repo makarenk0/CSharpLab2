@@ -1,5 +1,6 @@
-﻿using System;
-
+﻿using CSharpLab2.Exceptions;
+using System;
+using System.Text.RegularExpressions;
 
 namespace CSharpLab2.Models
 {
@@ -49,12 +50,20 @@ namespace CSharpLab2.Models
         public string Email
         {
             get { return _email; }
-            set { _email = value; }
+            set {
+                Regex regex = new Regex(@"^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$");
+                if (!regex.IsMatch(value)) throw new InvalidEmailException(value);
+                _email = value;
+            }
         }
         public DateTime BirthDate
         {
             get { return _birthDate; }
-            set { _birthDate = value; }
+            set {
+                if (DateTime.Today < value) throw new FutureBirthDateException(value);
+                else if (new DateTime(DateTime.Today.Subtract(value).Ticks).Year > 135) throw new OldBirthDateException(value);
+                _birthDate = value; 
+            }
         }
         public bool IsAdult
         {

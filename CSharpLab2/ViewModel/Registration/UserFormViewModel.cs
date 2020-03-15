@@ -1,14 +1,14 @@
-﻿using CSharpLab2.Models;
+﻿using CSharpLab2.Exceptions;
+using CSharpLab2.Models;
+using CSharpLab2.Tools.Managers;
 using CSharpLab2.Tools.MVVM;
 using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using System.Windows;
 
 namespace CSharpLab2.ViewModel
 {
-    class UserFormViewModel : INotifyPropertyChanged
+    internal class UserFormViewModel : BaseViewModel
     {
         private Person _person;
 
@@ -100,20 +100,19 @@ namespace CSharpLab2.ViewModel
 
         async private void ProceedInplementation(object obj)
         {
+            LoaderManager.Instance.ShowLoader();
             await Task.Run(() => ProceedData());
+            LoaderManager.Instance.HideLoader();
         }
 
         private void ProceedData()
         {
-            if (DateTime.Today < BirthDateField || new DateTime(DateTime.Today.Subtract(BirthDateField).Ticks).Year > 135)
-            {
-                MessageBox.Show($"You can`t be born in {BirthDateField} !");
-            }
-            else
+            try
             {
                 _person = new Person(NameField, SurnameField, EmailField, BirthDateField);
+
                 if (_person.IsBirthday) { MessageBox.Show($"Happy birthday, {Name} !"); }
-                #region Chenge Properties
+                #region Change Properties
                 OnPropertyChanged("Name");
                 OnPropertyChanged("Surname");
                 OnPropertyChanged("Email");
@@ -124,22 +123,24 @@ namespace CSharpLab2.ViewModel
                 OnPropertyChanged("IsBirthday");
                 #endregion
             }
+            catch (FutureBirthDateException exp)
+            {
+                MessageBox.Show($"Error: {exp.Message} !\n Your input: {exp.Value}");
+            }
+            catch (OldBirthDateException exp)
+            {
+                MessageBox.Show($"Error: {exp.Message} !\n Your input: {exp.Value}");
+            }
+            catch (InvalidEmailException exp)
+            {
+                MessageBox.Show($"Error: {exp.Message} !\n Your input: {exp.Value}");
+            }
         }
         #endregion
 
-        public bool CanExecuteCommand()
+        private bool CanExecuteCommand()
         {
             return !string.IsNullOrWhiteSpace(NameField)&& !string.IsNullOrWhiteSpace(SurnameField)&& !string.IsNullOrWhiteSpace(EmailField);
         }
-
-        #region INotifyPropertyImplementation
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        // [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-        #endregion
     }
 }

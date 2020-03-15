@@ -11,7 +11,7 @@ namespace CSharpLab2
     {
         public MainWindow()
         {
-            DataContext = new UserFormViewModel();
+            DataContext = new MainWindowViewModel();
             InitializeComponent();
         }
     }
