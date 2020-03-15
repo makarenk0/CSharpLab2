@@ -7,9 +7,11 @@ namespace CSharpLab2.Exceptions
     class OldBirthDateException : ArgumentOutOfRangeException
     {
         public DateTime Value { get; }
-        public OldBirthDateException(DateTime val) : base("Your birth date can`t be so old!")
+        public override string Message { get; }
+        public OldBirthDateException(DateTime val)
         {
             Value = val;
+            Message = "Your birth date can`t be so old!";
         }
     }
 }

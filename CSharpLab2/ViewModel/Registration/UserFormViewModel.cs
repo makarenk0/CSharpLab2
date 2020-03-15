@@ -45,7 +45,7 @@ namespace CSharpLab2.ViewModel
         }
         #endregion
 
-        #region ModelDataGetters  
+        #region ModelDataGetters
         //all data converts to string
         public string Name
         {

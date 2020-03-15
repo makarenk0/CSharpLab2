@@ -7,9 +7,11 @@ namespace CSharpLab2.Exceptions
     class FutureBirthDateException : ArgumentOutOfRangeException
     {
         public DateTime Value{ get; }
-        public FutureBirthDateException(DateTime val) : base("Your birth date can`t be in the future!")
+        public override string Message { get; }
+        public FutureBirthDateException(DateTime val)
         {
             Value = val;
+            Message = "Your birth date can`t be in the future!";
         }
     }
 }
